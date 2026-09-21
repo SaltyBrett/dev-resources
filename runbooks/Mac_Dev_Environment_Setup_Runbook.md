@@ -10,6 +10,16 @@ Work top to bottom. Each phase ends with a verification command, and nothing dow
 
 **Two sections to read before starting rather than after.** *macOS traps that cost real time* covers four behaviors that produce symptoms resembling something else. *The framework audit* records twelve defects found in the agentic template during this build, all sharing one shape: a control that looked correct and enforced nothing.
 
+> **Where this lives.** `github.com/SaltyBrett/dev-handbook` (private), at
+> `runbooks/Mac_Dev_Environment_Setup_Runbook.md`. Two gates run on that repository —
+> `gitleaks`, because a private repo on a free account gets no secret scanning from
+> GitHub, and the commit-msg attribution gate. Install both hook types after cloning:
+> `pre-commit install --hook-type pre-commit --hook-type commit-msg`.
+>
+> The framework template is a separate repository,
+> `github.com/SaltyBrett/agentic-dev-template`, and projects are created from it rather
+> than here — see *Starting a new project*.
+
 ## Contents
 
 - [Phase 1 — macOS foundation](#phase-1--macos-foundation)
