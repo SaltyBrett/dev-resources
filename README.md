@@ -1,6 +1,8 @@
-# dev-handbook
+# dev-resources
 
-Development philosophy and runbooks for my personal environment.
+Durable development resources shared across every project: the persona registry, runbooks, and
+reference knowledge. Renamed from `dev-handbook` on 2026-09-23; how projects consume it is decided
+in the template (`agentic-dev-template`, decision 2026-09-23-002).
 
 Prose, not code. Anything that needs governance, sprint state or a compliance gate
 belongs in a project created from
