@@ -1,7 +1,15 @@
-# Two gates, both mandatory. A private repo on a free account gets no secret scanning
-# from GitHub, so these are the only such controls here. Install once per clone:
+# Gates, all mandatory. A private repo on a free account gets no secret scanning from GitHub,
+# so local pre-commit is the only such control here. Install once per clone:
 #   pre-commit install --hook-type pre-commit --hook-type commit-msg
 # BOTH flags: plain `pre-commit install` leaves the commit-msg gate inert.
+#
+# Three gates are consumed from the template as a hook repository, pinned by `rev`, instead of
+# a copied script (agentic-dev-template decision 2026-09-23-005). The template is private, and
+# pre-commit clones it into ~/.cache/pre-commit, outside the ~/code/personal includeIf that
+# rewrites plain ssh URLs to the personal identity; so the URL names the ssh host alias the
+# Mac environment runbook sets up, and https (no keychain credential) is not used. The two
+# content gates are Skipped until this repository holds docs/personas/ and
+# docs/orchestration/knowledge/.
 repos:
   - repo: https://github.com/gitleaks/gitleaks
     rev: v8.21.2
@@ -9,12 +17,9 @@ repos:
       - id: gitleaks
         stages: [pre-commit]    # upstream declares none; without this it runs at every stage
 
-  - repo: local
+  - repo: git@github.com-personal:SaltyBrett/agentic-dev-template.git
+    rev: v5.1.0
     hooks:
+      - id: persona-lint
+      - id: kb-frontmatter-scan
       - id: commit-attribution
-        name: Commit Attribution Gate (no AI attribution in commit messages)
-        entry: python scripts/commit_attribution_scan.py
-        language: python        # pre-commit provisions the interpreter; macOS has no bare `python`
-        stages: [commit-msg]
-        pass_filenames: true
-        always_run: true

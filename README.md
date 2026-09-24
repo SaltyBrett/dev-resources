@@ -14,9 +14,8 @@ this repository is deliberately small.
 | Path | What it holds |
 | --- | --- |
 | `runbooks/` | Step-by-step procedures, each verified by execution rather than planned |
-| `scripts/` | The one gate this repo needs (see below) |
 
-## Why only two gates
+## Gates
 
 A private repository on a free GitHub account gets **no** secret scanning and no push
 protection — those run on public repositories only. Local `pre-commit` is therefore the
@@ -30,15 +29,21 @@ pre-commit install --hook-type pre-commit --hook-type commit-msg
 **Both `--hook-type` flags are required.** Plain `pre-commit install` registers only the
 pre-commit hook, leaving the commit-msg gate present in config and inert in practice.
 
-| Gate | Stage | Blocks |
-| --- | --- | --- |
-| `gitleaks` | `pre-commit` | a hardcoded secret |
-| `commit_attribution_scan.py` | `commit-msg` | an AI attribution trailer in a commit message |
+| Gate | From | Stage | Blocks |
+| --- | --- | --- | --- |
+| `gitleaks` | its upstream repository | `pre-commit` | a hardcoded secret |
+| `persona-lint` | the template, by `rev` | `pre-commit` | a persona without the required frontmatter keys, a slug that differs from its filename, or sections other than the three |
+| `kb-frontmatter-scan` | the template, by `rev` | `pre-commit` | a knowledge entry whose frontmatter is unreadable, or read differently by the two gates that consume it, or missing from the index |
+| `commit-attribution` | the template, by `rev` | `commit-msg` | an AI attribution trailer in a commit message |
 
-`scripts/commit_attribution_scan.py` is a copy from the template rather than a shared
-dependency. That is a known duplication: the template publishes no
-`.pre-commit-hooks.yaml`, so it cannot yet be consumed as a hook repository. One small
-file, rarely changed — revisit if it drifts.
+The three template gates are consumed from `agentic-dev-template`'s `.pre-commit-hooks.yaml`,
+so nothing here is a copy (its decision 2026-09-23-005). The template is private, and
+pre-commit clones it into `~/.cache/pre-commit`, outside the `includeIf` that routes
+`~/code/personal` through the personal identity, so the config names the `github.com-personal`
+ssh alias from `runbooks/Mac_Dev_Environment_Setup_Runbook.md` directly. A GitHub Actions run
+would need a deploy key or token secret to clone it, which is why there is none here yet. The
+two content gates are skipped until this repository holds `docs/personas/` and
+`docs/orchestration/knowledge/`, the layout the template's gates judge.
 
 ## What stays out
 
