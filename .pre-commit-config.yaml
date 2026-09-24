@@ -18,7 +18,7 @@ repos:
         stages: [pre-commit]    # upstream declares none; without this it runs at every stage
 
   - repo: git@github.com-personal:SaltyBrett/agentic-dev-template.git
-    rev: v5.1.0
+    rev: v6.0.0
     hooks:
       - id: persona-lint
       - id: kb-frontmatter-scan
