@@ -14,6 +14,7 @@ this repository is deliberately small.
 | Path | What it holds |
 | --- | --- |
 | `runbooks/` | Step-by-step procedures, each verified by execution rather than planned |
+| `docs/personas/` | The persona registry every project syncs from (template decision 2026-09-23-007); append-only by version, held to it by `persona-lint` on every commit here. Grown only through a project's `resources_sync.py --publish` |
 
 ## Gates
 
