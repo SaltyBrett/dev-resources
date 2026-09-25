@@ -18,9 +18,9 @@ this repository is deliberately small.
 
 ## Gates
 
-A private repository on a free GitHub account gets **no** secret scanning and no push
-protection — those run on public repositories only. Local `pre-commit` is therefore the
-only such control here, which is why it is not optional:
+This repository is public (template decision 2026-09-25-001), so GitHub's own secret scanning
+runs on it; local `pre-commit` is still the control that refuses the commit rather than
+reporting it afterwards, which is why it is not optional:
 
 ```bash
 pip install pre-commit
@@ -38,13 +38,14 @@ pre-commit hook, leaving the commit-msg gate present in config and inert in prac
 | `commit-attribution` | the template, by `rev` | `commit-msg` | an AI attribution trailer in a commit message |
 
 The three template gates are consumed from `agentic-dev-template`'s `.pre-commit-hooks.yaml`,
-so nothing here is a copy (its decision 2026-09-23-005). The template is private, and
-pre-commit clones it into `~/.cache/pre-commit`, outside the `includeIf` that routes
-`~/code/personal` through the personal identity, so the config names the `github.com-personal`
-ssh alias from `runbooks/Mac_Dev_Environment_Setup_Runbook.md` directly. A GitHub Actions run
-would need a deploy key or token secret to clone it, which is why there is none here yet. The
-two content gates are skipped until this repository holds `docs/personas/` and
-`docs/orchestration/knowledge/`, the layout the template's gates judge.
+so nothing here is a copy (its decision 2026-09-23-005). The template is public, so the config
+pins it by a plain https URL that needs no credential, from `~/.cache/pre-commit` and from the
+`gates` workflow alike (`.github/workflows/gates.yml` runs the same suite on every push). While
+the template was private the pin had to name the `github.com-personal` ssh alias, because
+pre-commit's cache sits outside the `includeIf` that routes `~/code/personal` through the
+personal identity; the template's `reference_published_hooks` entry keeps that measurement.
+The two content gates judge `docs/personas/` and `docs/orchestration/knowledge/`, the layout
+the template's gates expect.
 
 ## What stays out
 
