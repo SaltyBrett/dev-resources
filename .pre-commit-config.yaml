@@ -18,7 +18,7 @@ repos:
         stages: [pre-commit]    # upstream declares none; without this it runs at every stage
 
   - repo: git@github.com-personal:SaltyBrett/agentic-dev-template.git
-    rev: v7.0.0
+    rev: v1.0.0    # the pristine lineage's first tag; the archive's tags no longer live at this URL
     hooks:
       - id: persona-lint
       - id: kb-frontmatter-scan
