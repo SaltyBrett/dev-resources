@@ -4,11 +4,10 @@
 # BOTH flags: plain `pre-commit install` leaves the commit-msg gate inert.
 #
 # Three gates are consumed from the template as a hook repository, pinned by `rev`, instead of
-# a copied script (agentic-dev-template decision 2026-09-23-005). The template is private, and
-# pre-commit clones it into ~/.cache/pre-commit, outside the ~/code/personal includeIf that
-# rewrites plain ssh URLs to the personal identity; so the URL names the ssh host alias the
-# Mac environment runbook sets up, and https (no keychain credential) is not used. The two
-# content gates are Skipped until this repository holds docs/personas/ and
+# a copied script (agentic-dev-template decision 2026-09-23-005). The template is public since
+# decision 2026-09-25-001, so the pin is a plain https URL: it needs no credential, works from
+# ~/.cache/pre-commit where no per-directory git config reaches, and works in a GitHub Actions
+# job (.github/workflows/gates.yml). The two content gates judge docs/personas/ and
 # docs/orchestration/knowledge/.
 repos:
   - repo: https://github.com/gitleaks/gitleaks
@@ -17,8 +16,8 @@ repos:
       - id: gitleaks
         stages: [pre-commit]    # upstream declares none; without this it runs at every stage
 
-  - repo: git@github.com-personal:SaltyBrett/agentic-dev-template.git
-    rev: v1.0.0    # the pristine lineage's first tag; the archive's tags no longer live at this URL
+  - repo: https://github.com/SaltyBrett/agentic-dev-template
+    rev: v1.0.1    # the pristine lineage; the archive's tags no longer live at this URL
     hooks:
       - id: persona-lint
       - id: kb-frontmatter-scan

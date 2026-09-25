@@ -1,0 +1,58 @@
+# The gate suite, run by GitHub on every push and pull request.
+#
+# Git hooks are per-clone: a clone that never ran the install command commits with no gate at all,
+# and nothing in the repository can detect that. This workflow is the backstop, the same suite the
+# hooks run (agentic-dev-template decision 2026-09-22-001). It became possible when the template
+# that publishes three of the hooks went public (decision 2026-09-25-001): the job clones it over
+# https with no credential.
+#
+# Two stages, because `pre-commit run --all-files` covers the pre-commit stage only: the commit-msg
+# gate is run over every commit the push or pull request carries.
+name: gates
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # gitleaks and the commit-msg step read history
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+
+      - run: pip install pre-commit
+
+      - name: Pre-commit-stage gates
+        run: pre-commit run --all-files --show-diff-on-failure
+
+      - name: Commit-msg-stage gate over every commit in this push or pull request
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -eu
+          if [ "$EVENT" = "pull_request" ]; then
+            range="origin/$BASE_REF..HEAD"
+          elif [ -n "$BEFORE" ] && git cat-file -e "$BEFORE" 2>/dev/null; then
+            range="$BEFORE..HEAD"      # a normal push: exactly the commits it carried
+          else
+            range="HEAD~1..HEAD"        # a new branch or a force-push: the tip only
+          fi
+          echo "checking commit messages in $range"
+          for sha in $(git rev-list "$range"); do
+            git log -1 --format=%B "$sha" > /tmp/msg
+            echo "--- $(git log -1 --format='%h %s' "$sha")"
+            pre-commit run --hook-stage commit-msg --commit-msg-filename /tmp/msg --all-files
+          done
