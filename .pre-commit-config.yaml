@@ -17,7 +17,7 @@ repos:
         stages: [pre-commit]    # upstream declares none; without this it runs at every stage
 
   - repo: https://github.com/SaltyBrett/agentic-dev-template
-    rev: v1.0.1    # the pristine lineage; the archive's tags no longer live at this URL
+    rev: v1.0.0    # the template's first public release (its decision 2026-09-25-004)
     hooks:
       - id: persona-lint
       - id: kb-frontmatter-scan
